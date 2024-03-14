@@ -28,6 +28,7 @@ const wss = new ws.WebSocketServer({server});
 
 wss.on('connection', (connection) => {
     console.log('WebSocket connection established');
+    connection.send("Hello!");
     
     connection.on('close', () => {
       console.log('WebSocket connection closed');
