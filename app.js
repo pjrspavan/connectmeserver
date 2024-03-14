@@ -7,7 +7,7 @@ require('dotenv').config();
 const cors = require('cors');
 const signupRouter = require('./routers/signupRouter')
 const ws = require('ws')
-// const PORT = 1111
+const PORT = 1111
 
 mongoose.connect(process.env.MONGODB_CLUSTER)
 
@@ -21,15 +21,16 @@ app.use("/api/signup", signupRouter);
 
 app.use("/api/login", loginRouter)
 
-const server = app.listen(process.env.PORT);
+const server = app.listen(PORT);
 
 
 const wss = new ws.WebSocketServer({server});
 
-wss.on('connection', (connection) => {
+wss.on('connection', (connection, request) => {
     console.log('WebSocket connection established');
-    connection.send("Hello!");
-    
+
+    console.log("Request headers: ",request.headers)
+
     connection.on('close', () => {
       console.log('WebSocket connection closed');
     });
