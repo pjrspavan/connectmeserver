@@ -37,8 +37,8 @@ loginRouter.post('/', expressAsyncHandler(async(request, response)=>{
         {httpOnly:true,
         sameSite:'strict',
         secure:true})
-        .sendStatus(200);
-        // response.status(200).json({ message: 'Login successful!', token});
+        
+        response.status(200).json({ message: 'Login successful!', token});
         
     }catch(error){
         console.log(error)
