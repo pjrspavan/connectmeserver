@@ -32,11 +32,11 @@ loginRouter.post('/', expressAsyncHandler(async(request, response)=>{
         const token = jwt.sign({ email: existingUser.email}, process.env.JWT_SECRET_KEY);
     
         //RESPONSE
-        // response
-        // .cookie('token', token,
-        // {httpOnly:true,
-        // sameSite:'strict',
-        // secure:true})
+        response
+        .cookie('token', token,
+        {httpOnly:true,
+        sameSite:'strict',
+        secure:true})
         
         response.status(200).json({ message: 'Login successful!', token});
         
