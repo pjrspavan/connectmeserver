@@ -7,7 +7,7 @@ require('dotenv').config();
 const cors = require('cors');
 const signupRouter = require('./routers/signupRouter')
 const ws = require('ws')
-// const PORT = 1111
+const PORT = 1111
 const jwt = require('jsonwebtoken');
 
 mongoose.connect(process.env.MONGODB_CLUSTER)
@@ -22,7 +22,7 @@ app.use("/api/signup", signupRouter);
 
 app.use("/api/login", loginRouter)
 
-const server = app.listen(process.env.PORT);
+const server = app.listen(PORT);
 
 
 const wss = new ws.WebSocketServer({server});
@@ -33,7 +33,7 @@ wss.on('connection', (connection, request) => {
     const token = request.url.split('?')[1].split('=')[1]; 
     // console.log("token", token)
 
-    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, userData)=>{
+    jwt.verify(token, process.env.JWT_SECRET_KEY, {},(err, userData)=>{
       if(err) throw err
       console.log(userData)
       connection.id = userData.email
@@ -42,22 +42,22 @@ wss.on('connection', (connection, request) => {
 
     let clients = [...wss.clients]
     // console.log("No. of clients", [...wss.clients].map(c=>c.id))
-    console.log(clients.map(c=>c.token))
+    console.log([...wss.clients].map(c=>c.token))
 
     clients.forEach(client=>{
       client.send(JSON.stringify({
-        online:clients.map(c=>({id:c.id, token:c.token}))
+        online:[...wss.clients].map(c=>({id:c.id, token:c.token}))
       }))
     })
 
     connection.on('message', (message)=>{
-      message = JSON.parse(message.toString());
-      console.log(message)
-      const {recipient, text} = message
+      let messageData = JSON.parse(message.toString());
+      console.log(messageData)
+      const {recipient, text} = messageData
       if(recipient && text){
-        clients
+        [...wss.clients]
         .filter(c=>c.id===recipient.id)
-        .forEach(c=>c.send(JSON.stringify({text})))
+        .forEach(c=>c.send(JSON.stringify({recipient,text})))
       }
     })
     
