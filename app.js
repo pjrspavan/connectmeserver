@@ -7,7 +7,7 @@ require('dotenv').config();
 const cors = require('cors');
 const signupRouter = require('./routers/signupRouter')
 const ws = require('ws')
-const PORT = 1111
+// const PORT = 1111
 const jwt = require('jsonwebtoken');
 
 mongoose.connect(process.env.MONGODB_CLUSTER)
@@ -22,7 +22,7 @@ app.use("/api/signup", signupRouter);
 
 app.use("/api/login", loginRouter)
 
-const server = app.listen(PORT);
+const server = app.listen(process.env.PORT);
 
 
 const wss = new ws.WebSocketServer({server});
