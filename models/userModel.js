@@ -24,7 +24,8 @@ const userSchema = mongoose.Schema({
       posted: []
     },
     Interests: [String],
-    dp: { type: Buffer}
+    dp: { type: Buffer},
+    pastConversations:{}
   });
   
   const User = mongoose.model('User', userSchema);
