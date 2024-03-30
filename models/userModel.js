@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const Education = require('./educationModel');
-const Connection = require('./connectionModel');
-const WorkExperience = require('./workExperienceModel');
 
 const userSchema = mongoose.Schema({
     firstName: { type: String},
@@ -17,7 +14,6 @@ const userSchema = mongoose.Schema({
       name: { type: String, required: true },
       description: { type: String, required: true }
     }],
-    posts: [],
     Activity: {
       liked: [],
       commented: [],
@@ -25,7 +21,7 @@ const userSchema = mongoose.Schema({
     },
     Interests: [String],
     dp: { type: Buffer},
-    pastConversations:{}
+    userType:{type:String},
   });
   
   const User = mongoose.model('User', userSchema);

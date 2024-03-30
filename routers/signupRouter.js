@@ -2,16 +2,12 @@ const express = require('express')
 const expressAsyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
+const CORS = require('../middleware/cors.js');
 
 const signupRouter = express.Router()
 
 // CORS middleware
-signupRouter.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
+signupRouter.use(CORS);
 
 signupRouter.post('/', expressAsyncHandler(async(request, response)=>{
     const email = request.body.email;
@@ -30,6 +26,7 @@ signupRouter.post('/', expressAsyncHandler(async(request, response)=>{
         const posts = []
         const activity = {liked:[], commented:[], posted:[]}
         const interests = []
+        const userType = "Student"
         
         const newConnectMeUser = new User({
             firstName, 
@@ -44,7 +41,8 @@ signupRouter.post('/', expressAsyncHandler(async(request, response)=>{
             projects,
             posts,
             activity,
-            interests
+            interests,
+            userType
         })
         console.log(newConnectMeUser)
         const saved = await newConnectMeUser.save();

@@ -9,6 +9,8 @@ const signupRouter = require('./routers/signupRouter')
 const ws = require('ws')
 const PORT = 1111
 const jwt = require('jsonwebtoken');
+const Chat = require('./models/chatModel')
+const chatRouter = require('./routers/chatRouter')
 
 mongoose.connect(process.env.MONGODB_CLUSTER)
 
@@ -21,6 +23,8 @@ app.get("/", (req,res)=>{
 app.use("/api/signup", signupRouter);
 
 app.use("/api/login", loginRouter)
+
+app.use("/api/chats", chatRouter)
 
 const server = app.listen(process.env.PORT || PORT);
 
@@ -53,15 +57,19 @@ wss.on('connection', (connection, request) => {
         online:[...wss.clients].map(c=>({id:c.id}))
       }))
     })
-
-    connection.on('message', (message)=>{
+ 
+    connection.on('message', async(message)=>{
       let messageData = JSON.parse(message.toString());
       console.log(messageData)
-      const {recipient, text} = messageData
-      if(recipient && text){
+      const {senderId, receiverId, text} = messageData
+      if(senderId && receiverId && text){
+        const newChatMsg = new Chat({senderId:senderId, receiverId : receiverId, text:text})
+        await newChatMsg.save()
+      }
+      if(senderId && receiverId && text){
         [...wss.clients]
-        .filter(c=>c.id===recipient.id)
-        .forEach(c=>c.send(JSON.stringify({recipient,text})))
+        .filter(c=>c.id===receiverId)
+        .forEach(c=>c.send(JSON.stringify({senderId,receiverId,text})))
       }
     })
     
